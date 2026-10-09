@@ -10,9 +10,7 @@ public class Main {
         tasks.add("Set up CI/CD pipeline");
         tasks.add("Implement automated testing");
         tasks.add("celebrate");
-        printTasks(tasks);
-    }
-    public static void printTasks(List<String> tasks) {
         System.out.println("Tasks to complete: " + tasks);
     }
+    
 }
