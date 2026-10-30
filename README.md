@@ -101,6 +101,13 @@ save. In SonarQube, add a webhook with URL
 results. The pipeline uses the `Sonar way` quality gate and fails the build if
 that gate fails. Do not put the SonarQube token in source control.
 
+SonarQube blocks webhook destinations on private networks by default. For this
+localhost-only setup, disable **Administration > Configuration > General
+settings > Security > Enable local webhooks validation** before creating the
+webhook. This disables destination validation for all webhooks on this
+SonarQube instance, so keep its port bound to `127.0.0.1` and do not expose the
+instance to untrusted users or networks.
+
 The `DevOpsPractice` job reports Maven console warnings in Jenkins and runs
 SonarQube analysis for project key `devops-project`.
 This local setup is intended for learning and uses SonarQube's embedded
