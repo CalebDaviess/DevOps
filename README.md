@@ -70,8 +70,9 @@ have the Docker Pipeline plugin installed and access to a Docker daemon.
 ### Run the local Jenkins controller with Docker Pipeline support
 
 The local controller setup uses `compose.jenkins.yaml` and `Dockerfile.jenkins`.
-The image is pinned to the running Jenkins version, adds the Docker CLI and
-Docker Pipeline plugin, and preserves the existing `jenkins_home` Docker volume.
+The image is pinned to the running Jenkins version, adds the Docker CLI, Docker
+Pipeline plugin, and Pipeline: Stage View plugin, and preserves the existing
+`jenkins_home` Docker volume.
 It mounts the Docker socket, which grants Jenkins control over the local Docker
 daemon; only use this configuration on a trusted development machine.
 

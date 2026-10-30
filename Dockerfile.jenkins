@@ -5,6 +5,6 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends docker-cli \
     && rm -rf /var/lib/apt/lists/*
 
-RUN jenkins-plugin-cli --plugins docker-workflow
+RUN jenkins-plugin-cli --plugins docker-workflow:653.v2f2c08eff0ec pipeline-stage-view:2.41
 
 USER jenkins
