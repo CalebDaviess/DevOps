@@ -62,7 +62,8 @@ The root `Jenkinsfile` uses the Docker Cloud agent labeled
 `maven-docker-agent` to check out the repository and run
 `mvn --batch-mode --no-transfer-progress clean verify`. This resolves
 dependencies, compiles the project, and runs any tests in `src/test/java`;
-Maven reports success when no tests have been added yet.
+JUnit 5 tests run during verification, and JaCoCo writes XML coverage to
+`target/site/jacoco/jacoco.xml` for SonarQube to import.
 
 Configure the Jenkins job as **Pipeline script from SCM** with this repository
 and the script path set to `Jenkinsfile`.
