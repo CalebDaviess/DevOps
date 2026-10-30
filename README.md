@@ -56,6 +56,17 @@ java -cp target/classes uk.ac.cardiffmet.devops.Main
 6. Push the branch and create a pull request
 7. Validate CI/CD checks before merging
 
+## Jenkins Pipeline
+
+The root `Jenkinsfile` uses the Maven 3.9.9 and Java 21 Docker image to check out
+the repository and run `mvn --batch-mode --no-transfer-progress clean verify`.
+This resolves dependencies, compiles the project, and runs any tests in
+`src/test/java`; Maven reports success when no tests have been added yet.
+
+Configure the Jenkins job as **Pipeline script from SCM** with this repository
+and the script path set to `Jenkinsfile`. The Jenkins controller or agent must
+have the Docker Pipeline plugin installed and access to a Docker daemon.
+
 ## Notes
 
 The compiler release is pinned to Java 21 in `pom.xml`, so using a matching JDK is required for successful builds.
