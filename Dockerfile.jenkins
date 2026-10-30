@@ -6,6 +6,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 RUN jenkins-plugin-cli --plugins \
+    docker-plugin:1324.v2fb_b_df97fe1d \
     docker-workflow:653.v2f2c08eff0ec \
     pipeline-stage-view:2.41 \
     sonar:2.19.0 \

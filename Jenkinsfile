@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.9.9-eclipse-temurin-21'
-            args '--network devops-ci'
-        }
-    }
+    agent { label 'maven-docker-agent' }
 
     options {
         timestamps()

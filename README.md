@@ -58,28 +58,28 @@ java -cp target/classes uk.ac.cardiffmet.devops.Main
 
 ## Jenkins Pipeline
 
-The root `Jenkinsfile` uses the Maven 3.9.9 and Java 21 Docker image to check out
-the repository and run `mvn --batch-mode --no-transfer-progress clean verify`.
-This resolves dependencies, compiles the project, and runs any tests in
-`src/test/java`; Maven reports success when no tests have been added yet.
+The root `Jenkinsfile` uses the Docker Cloud agent labeled
+`maven-docker-agent` to check out the repository and run
+`mvn --batch-mode --no-transfer-progress clean verify`. This resolves
+dependencies, compiles the project, and runs any tests in `src/test/java`;
+Maven reports success when no tests have been added yet.
 
 Configure the Jenkins job as **Pipeline script from SCM** with this repository
-and the script path set to `Jenkinsfile`. The Jenkins controller or agent must
-have the Docker Pipeline plugin installed and access to a Docker daemon.
+and the script path set to `Jenkinsfile`.
 
-### Run the local Jenkins controller with Docker Pipeline support
+### Run the local Jenkins controller with Docker support
 
 The local controller setup uses `compose.jenkins.yaml` and `Dockerfile.jenkins`.
 The image is pinned to the running Jenkins version and installs the Docker CLI,
-Docker Pipeline, Pipeline: Stage View, SonarQube Scanner for Jenkins, and
-Warnings Next Generation plugins. The Compose file also starts a local
+Docker Cloud, Docker Pipeline, Pipeline: Stage View, SonarQube Scanner for
+Jenkins, and Warnings Next Generation plugins. The Compose file also starts a local
 SonarQube Community Build at `http://localhost:9000`; its data, extensions, and
 logs persist in separate Docker volumes.
 
-The Jenkins controller and SonarQube share a private Docker network. Pipeline
-build containers join that network to reach SonarQube. Jenkins also mounts the
-Docker socket, which grants Jenkins control over the local Docker daemon; only
-use this setup on a trusted development machine.
+The Jenkins controller, SonarQube, and Docker Cloud Maven agents share a private
+Docker network. Jenkins also mounts the Docker socket, which grants Jenkins
+control over the local Docker daemon; only use this setup on a trusted
+development machine.
 
 From the repository root, run:
 
@@ -112,6 +112,23 @@ The `DevOpsPractice` job reports Maven console warnings in Jenkins and runs
 SonarQube analysis for project key `devops-project`.
 This local setup is intended for learning and uses SonarQube's embedded
 database; use a supported external database for a production deployment.
+
+### Docker Cloud Maven agent
+
+Build the local Java 21/Maven agent image from the repository root:
+
+```powershell
+docker build -f Dockerfile.maven-agent -t devops-maven-agent:3.9.9-java21 .
+```
+
+In **Manage Jenkins > Clouds**, add a Docker cloud with Docker Host URI
+`unix:///var/run/docker.sock`. Test the connection, then add an enabled agent
+template with label `maven-docker-agent`, image
+`devops-maven-agent:3.9.9-java21`, remote filesystem root
+`/home/jenkins/agent`, instance capacity `1`, pull strategy **Never pull**, and
+container network `devops-ci`. Use **Attach Docker container** as the connection
+method. The network setting lets the agent reach SonarQube at
+`http://sonarqube:9000`.
 
 ## Notes
 
