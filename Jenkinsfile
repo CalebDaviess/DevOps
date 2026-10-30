@@ -2,11 +2,13 @@ pipeline {
     agent {
         docker {
             image 'maven:3.9.9-eclipse-temurin-21'
+            args '--network devops-ci'
         }
     }
 
     options {
         timestamps()
+        skipDefaultCheckout(true)
     }
 
     stages {
@@ -21,6 +23,31 @@ pipeline {
             steps {
                 echo 'Resolving Maven dependencies, compiling, and running tests'
                 sh 'mvn --batch-mode --no-transfer-progress clean verify'
+            }
+        }
+
+        stage('Compiler Warnings') {
+            steps {
+                echo 'Collecting Maven compiler warnings for the Jenkins build report'
+                recordIssues tools: [mavenConsole()]
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                echo 'Analyzing source code with SonarQube'
+                withSonarQubeEnv('Local SonarQube') {
+                    sh 'mvn --batch-mode --no-transfer-progress sonar:sonar'
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                echo 'Waiting for the SonarQube quality gate result'
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
             }
         }
     }
