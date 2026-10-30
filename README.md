@@ -67,6 +67,26 @@ Configure the Jenkins job as **Pipeline script from SCM** with this repository
 and the script path set to `Jenkinsfile`. The Jenkins controller or agent must
 have the Docker Pipeline plugin installed and access to a Docker daemon.
 
+### Run the local Jenkins controller with Docker Pipeline support
+
+The local controller setup uses `compose.jenkins.yaml` and `Dockerfile.jenkins`.
+The image is pinned to the running Jenkins version, adds the Docker CLI and
+Docker Pipeline plugin, and preserves the existing `jenkins_home` Docker volume.
+It mounts the Docker socket, which grants Jenkins control over the local Docker
+daemon; only use this configuration on a trusted development machine.
+
+From the repository root, run:
+
+```powershell
+docker compose -f compose.jenkins.yaml build
+docker stop jenkins
+docker rm jenkins
+docker compose -f compose.jenkins.yaml up -d
+```
+
+The Jenkins UI remains at `http://localhost:8080`. The existing Jenkins volume
+is external and is not removed by these commands.
+
 ## Notes
 
 The compiler release is pinned to Java 21 in `pom.xml`, so using a matching JDK is required for successful builds.
